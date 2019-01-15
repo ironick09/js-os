@@ -6,9 +6,14 @@ WORK IN PROG
 
 ### gdb shortcuts
 Add these to ~/.gdbinit for quick and easy debugging
+
 Connect to remote gdb target: `gdb remote localhost:2600`
 
+
+
+
 ```
+cat << EOF >> ~/.gdbinit
 set disassembly-flavor intel
 set startup-with-shell off
 
@@ -22,4 +27,5 @@ layout reg
 set architecture i8086
 target remote localhost:26000
 b *0x7c00
+EOF
 ```
