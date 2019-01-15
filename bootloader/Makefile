@@ -1,14 +1,16 @@
-BUILD_DIR=../build/bootloader
+BUILD_DIR=../build/boot
+BOOTLOADER=$(BUILD_DIR)/bootloader
+
+BOOTLOADER_OBJS_TARGET := $(BUILD_DIR)/%.o
 
 BOOTLOADER_SRCS := $(wildcard *.asm)
-BOOTLOADER_OBJS := $(patsubst %.asm, $(BUILD_DIR)/%.o, $(BOOTLOADER_SRCS))
+BOOTLOADER_OBJS := $(patsubst %.asm, $(BOOTLOADER_OBJS_TARGET),$(BOOTLOADER_SRCS))
 
-all: $(BOOTLOADER_OBJS)
+all: $(BUILD_DIR)/bootloader
 
-$(BUILD_DIR)/%.o: %.asm
-	nasm -f elf $< -F dwarf -g -o $@
-	ld -lSystem -macosx_version_min 10.14  $@ -o $@.elf
-	objcopy -O binary $(BUILD_DIR)/bootloader.o.elf $@
+$(BOOTLOADER_OBJS_TARGET): %.asm
+	nasm -f elf -F dwarf -g $< -o $@
 
-clean:
-	rm $(BUILD_DIR)/*
+$(BOOTLOADER_OBJS_TARGET): %.asm
+	ld -m elf_i386 -T bootloader.lds $< -o $@.bin
+	objcopy -O binary $@.bin $@
